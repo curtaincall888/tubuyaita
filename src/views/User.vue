@@ -1,28 +1,45 @@
 <template>
   <div id="user">
     <div class="user-title">
-      <div class="avatar" :style="'backgroud-image: url('+user.photoURL+')'"></div>
+      <div class="avatar" :style="'background-image: url('+user.photoURL+')'"></div>
       <div class="texts">
         <h1>{{ user.name }}</h1>
+        <p v-if="myTubuyakies.length > 1">{{ myTubuyakies.length }} tubuyakies</p>
+        <p v-else>{{ myTubuyakies.length }} tubuyaki</p>
       </div>
+    </div>
+    <div class="list">
+      <Item
+        v-for="tubuyaki in orderBy(myTubuyakies, 'date', -1)"
+        :key="tubuyaki.id"
+        :id="tubuyaki.id"
+        :uid="tubuyaki.uid"
+        >
+      </Item>
     </div>
   </div>
 </template>
 
 <script>
 import { db } from '../main'
+import firebase from 'firebase'
+import Item from '@/components/Item'
+import Vue2Filters from 'vue2-filters'
 
 export default {
   data() {
     return {
-      user: {}
+      user: {},
+      myTubuyakies: {}
     }
   },
   firestore() {
     return {
-      user: db.collection('users').doc(this.$route.params.uid)
+      user: db.collection('users').doc(this.$route.params.uid),
+      myTubuyakies: db.collection('tubuyakies').where('uid', '==', this.$route.params.uid)
     }
-  }
+  },
+  mixins: [Vue2Filters.mixin]
 }
 </script>
 
