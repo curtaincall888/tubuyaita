@@ -5,8 +5,7 @@
       <p class="user-name">{{ currentUser.displayName }}</p>
     </div>
     <div class="editor">
-      <textarea placeholder="new tubuyaki" v-model="newTubuyaki" @keypress.enter="createTubuyaki">
-      </textarea>
+      <textarea placeholder="new tubuyaki" v-model="newTubuyaki" @keypress.enter="createTubuyaki"></textarea>
       <p class="message">Press Enter to tubuyaki</p>
     </div>
   </li>

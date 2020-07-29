@@ -68,18 +68,20 @@ export default {
 
 <style lang="stylus" scoped>
 header
+  z-index 9999
   position fixed
   top 0
   width 100%
   text-align center
   padding 10px
+  background-color rgb(29, 161, 242)
   h1
     width fit-content
     margin 0 auto
     font-size 1.4rem
   .btns
     position absolute
-    top 10px
+    top 5px
     right 30px
     cursor pointer
     img

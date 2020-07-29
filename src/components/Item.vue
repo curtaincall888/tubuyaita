@@ -5,12 +5,17 @@
       </div>
       <p class="user-name">{{user.name}}</p>
     </div>
-    <div class="content" v-html="tubuyaki.content">
+    <div v-if="editing" class="editor">
+      <textarea v-model="tubuyaki.content" placeholder="edit tubuyaki" @keypress.enter="updateTubuyaki"></textarea>
+      <p class="message">Press Enter to tubuyaki</p>
+    </div>
+    <div v-else class="content" v-html="tubuyaki.content">
     </div>
     <button v-if="currentUser && currentUser.uid == user.id" @click="showBtns = !showBtns">
       <fa icon="ellipsis-v"/>
     </button>
     <div v-if="showBtns" class="controls">
+      <li @click="editing = !editing">edit</li>
       <li @click="deleteTubuyaki" style="color: red">
         delete
       </li>
@@ -21,6 +26,7 @@
 <script>
 import { db } from '../main'
 import { auth } from '../main'
+import firebase from 'firebase'
 
 export default {
   props: ['id','uid'],
@@ -29,7 +35,8 @@ export default {
       tubuyaki: {},
       user: {},
       currentUser: {},
-      showBtns: false
+      showBtns: false,
+      editing: false
     }
   },
   methods: {
@@ -37,6 +44,16 @@ export default {
       if(window.confirm('Are you sure to delete this tubuyaki?')) {
         db.collection('tubuyakies').doc(this.$props.id).delete()
       }
+    },
+    updateTubuyaki() {
+      const date = new Date()
+      db.collection('tubuyakies').doc(this.tubuyaki.id).set({
+        'content': this.tubuyaki.content,
+        'date': date
+      },{ merge: true })
+      .then(
+        this.editing = false
+      )
     }
   },
   created() {
