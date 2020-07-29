@@ -21,6 +21,7 @@
 <script>
 import firebase from 'firebase'
 import { auth } from '../main'
+import { db } from '../main'
 export default {
   data() {
     return {
@@ -38,7 +39,15 @@ export default {
       auth.signInWithPopup(provider)
       .then((result) => {
         alert('Hello, '+result.user.displayName+'!')
+        this.createUser(result.user)
       })
+    },
+    createUser(user) {
+      db.collection('users').doc(user.uid).set({
+        'name': user.displayName,
+        'photoURL': user.photoURL,
+        'email': user.email
+      },{ merge: true })
     },
     signOut() {
       if (window.confirm('Are you Sure to Sign Out ?')) {
@@ -49,7 +58,7 @@ export default {
           location.reload()
         })
       }
-    }
+    },
   }
 }
 </script>
