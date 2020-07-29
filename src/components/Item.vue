@@ -7,19 +7,42 @@
     </div>
     <div class="content" v-html="tubuyaki.content">
     </div>
+    <button v-if="currentUser && currentUser.uid == user.id" @click="showBtns = !showBtns">
+      <fa icon="ellipsis-v"/>
+    </button>
+    <div v-if="showBtns" class="controls">
+      <li @click="deleteTubuyaki" style="color: red">
+        delete
+      </li>
+    </div>
   </li>
 </template>
 
 <script>
 import { db } from '../main'
+import { auth } from '../main'
 
 export default {
   props: ['id','uid'],
   data () {
     return {
       tubuyaki: {},
-      user: {}
+      user: {},
+      currentUser: {},
+      showBtns: false
     }
+  },
+  methods: {
+    deleteTubuyaki() {
+      if(window.confirm('Are you sure to delete this tubuyaki?')) {
+        db.collection('tubuyakies').doc(this.$props.id).delete()
+      }
+    }
+  },
+  created() {
+    auth.onAuthStateChanged(user => {
+      this.currentUser = user
+    })
   },
   firestore () {
     return {
@@ -54,7 +77,7 @@ export default {
       &:focus
         outline none
     .message
-      opacity 0  
+      opacity 0
       position absolute
       bottom 5px
       right 10px
@@ -63,10 +86,6 @@ export default {
     &:hover
       .message
         opacity 1
-    &:first-child
-      border none
-    &:hover
-      background rgba(0,0,0,.02)
   .user-box
     margin 10px 10px 10px 0
     .avatar
@@ -83,4 +102,36 @@ export default {
       width 50px
   .content
     padding 10px
+  button
+    position absolute
+    top 5px
+    right 0
+    background transparent
+    color #555
+    font-size .9rem
+    opacity 0
+    transition .2s
+  .controls
+    background white
+    position absolute
+    top 5px
+    right 35px
+    box-shadow 0 0 5px rgba(0,0,0,.05)
+    border-radius 3px
+    opacity 0
+    li
+      padding 5px 20px
+      border-top 1px solid #eee
+      cursor pointer
+      &:first-child
+        border none
+  &:first-child
+    border none
+  &:hover
+    background rgba(0,0,0,.02)
+    .content
+    button
+      opacity 1
+    .controls
+      opacity 1
 </style>
